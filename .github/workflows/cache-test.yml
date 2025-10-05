@@ -1,0 +1,38 @@
+name: Cache Demo Workflow
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - uses: actions/cache@v4
+        id: cache-deps
+        with:
+          path: ~/.npm
+          key: cache-f7b980d
+          restore-keys: |
+            cache-f7b980d
+            
+      - name: prime-cache-f7b980d
+        run: |
+          echo "Cache status for cache-f7b980d:"
+          echo "Result: ${{ steps.cache-deps.outputs.cache-hit }}"
+          
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build --if-present
