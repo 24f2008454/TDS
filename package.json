@@ -1,0 +1,8 @@
+{
+  "name": "TDS",
+  "version": "1.0.0",
+  "description": "TDS project with GitHub Actions cache demo",
+  "scripts": {
+    "test": "echo \"No tests specified\""
+  }
+}
