@@ -1,29 +1,42 @@
-name: Cache Test Workflow
+name: Cache Demo Workflow
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          python-version: '3.x'
-
+          node-version: '20'
+          
       - name: Cache dependencies
-        id: cache
         uses: actions/cache@v4
+        id: cache-f7b980d
         with:
-          path: ~/.cache/pip
+          path: ~/.npm
           key: cache-f7b980d
-
+          restore-keys: |
+            cache-f7b980d
+            
       - name: prime-cache-f7b980d
-        run: echo "Cache result => ${{ steps.cache.outputs.cache-hit }}"
+        run: |
+          if [ "${{ steps.cache-f7b980d.outputs.cache-hit }}" == "true" ]; then
+            echo "Cache hit ✅"
+          else
+            echo "Cache miss ❌"
+          fi
+          
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build --if-present
